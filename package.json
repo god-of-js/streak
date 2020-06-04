@@ -1,0 +1,29 @@
+{
+  "name": "streak",
+  "version": "1.0.0",
+  "description": "movie streaming app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src",
+    "watch": "nodemon src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henryeze/streak.git"
+  },
+  "keywords": [
+    "streak"
+  ],
+  "author": "Godofjs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henryeze/streak/issues"
+  },
+  "homepage": "https://github.com/henryeze/streak#readme",
+  "dependencies": {
+    "cuid": "^2.1.8",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.8",
+    "mongoose": "^5.9.17"
+  }
+}
