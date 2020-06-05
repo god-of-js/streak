@@ -2,12 +2,10 @@ const express = require("express");
 
 const app = express();
 
-app.use((request, response, next) => {
-    const token = request.get("authorization");
-
-    if(!token || token !== "admin") response.status(401).send({message: "You are not authorized"})
-    else next();
-})
+const bodyParser = require("body-parser");
+require("./data/db")
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use("/api/v1", require("./routes"));
 
