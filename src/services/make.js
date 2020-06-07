@@ -1,5 +1,4 @@
 const base = require("../base");
-
 module.exports = (controller) => async (request, response) => {
   try {
     const data = await controller(request);

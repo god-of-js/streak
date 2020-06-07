@@ -26,6 +26,7 @@ module.exports.register = async (req) => {
     delete data.password;
     return new base.Response(201, {
         message: "Account created successfully",
-        ...data,
+        data,
+        error: false
     })
 }
