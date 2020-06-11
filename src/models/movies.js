@@ -5,37 +5,46 @@ const schema = new mongoose.Schema({
         required: "you must provide movie name",
         minlength: 1
     },
-    image: {
-        type: File,
-        required: "You must provide Image",
-        validate: {
-            validator: (value) => {
-                value
-                message: "Image must be of type png or jpg"
-            }
-        }
+    description: {
+        type: String,
+        required: "You must provide description",
+        minlength: 1    
     },
-    video: {
-        type: File,
-        required: "You must provide Video",
-        validate: {
-            validator: (value) =>{
-                message: "Video must be of type "
-            }
-        }
+    date: {
+        type: Date,
+        required: "You must provide date of production",
     },
-    rating: {
-        type: Number,
+    cast: {
+        type: String,
+        required: "You must provide cast",
+    },
+    imgUrl: {
+        type: String,
+        required: "No Image Url"
+    },
+    videoUrl:  {
+        type: String,
+        required: "No Video Url"
+    },
+    createdAt: {
+        type: Date,
     },
     pg: {
         type: Number,
         required: "you must provide Parental Guidiance"
     },
-    date: {
-        type: Date,
-        required: "You must provide date of production",
-
-
-
+    type: {
+        type: String,
+        required: 'You must provide type of movie',
+         validate: {
+        validator: (value) => /^(series|single)$/.test(value),
+        message:
+          "Invalid Movie type",
+      },
+    },
+    category: {
+        type: Array,
+        required: "You must provide category"
     }
 })
+module.exports = mongoose.model("movies", schema);
