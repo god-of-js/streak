@@ -1,5 +1,5 @@
 const DB = require('./db.js');
-import {id} from require('../services/provider.js')
+const { id } = require('../services/provider.js')
 
 module.exports = (collection) => {
     const insert = async ({id = id(), ...data}) => {

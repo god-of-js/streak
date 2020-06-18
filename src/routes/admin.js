@@ -1,13 +1,18 @@
 const router = require("express").Router();
-const videoUpload = require("../controllers/admin/movie");
+const movies = require("../controllers/admin/movie");
 const make = require("../services/make");
+const {isAuthenticated, isAccountType }= require('../middleware');
 const upload = require('multer')()
-module.exports = router
-
-
+module.exports = router;
 router.post('/video-upload',
     upload.array("media"),
-    make(videoUpload.uploadMovie));
+    isAuthenticated,
+    isAccountType('admin'),
+    make(movies.uploadMovie)
+    );
+router.get('/get-admin-videos',
+    make(movies.getAdminMovies)
+    );
 
 
 

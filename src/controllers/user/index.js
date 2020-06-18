@@ -1,5 +1,6 @@
 const base = require('../../base')
 const User = require('../../models/user.js')
+const Token = require('../../services/tokens')
 module.exports.register = async (req) => {
     const { name, password, accountType, email, phone } = req.body
     if (!name) throw new base.ResponseError(400, "You must provide Name")
@@ -8,7 +9,6 @@ module.exports.register = async (req) => {
     if (!phone) throw new base.ResponseError(400, "You must provide phone")
     if (!accountType) throw new base.ResponseError(400, "You must provide User Type")
     if ((password + "").length < 8) throw new base.ResponseError(400, "Password must be more than 8 characters")
-
     const emailExists = await User.findByEmail(email).exec();
     if (emailExists !== null) throw new base.ResponseError(400, "Email is already in use");
     const user = new User({
@@ -19,6 +19,14 @@ module.exports.register = async (req) => {
         phone,
         createdAt: Date.now()
     })
+    const jwt = Token.create({
+        email: user.email,
+        password: user.password,
+        accountType: user.accountType,
+        purpose: 'Verification'
+    },
+        { expiresIn: '7d', issuer: 'Blue-streak' }
+    )
     await user.save().catch((e) => {
         throw new base.ResponseError(400, e.message)
     })
@@ -27,6 +35,7 @@ module.exports.register = async (req) => {
     return new base.Response(201, {
         message: "Account created successfully",
         data,
-        error: false
+        error: false,
+        jwt
     })
 }

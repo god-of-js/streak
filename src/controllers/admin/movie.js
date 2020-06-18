@@ -2,22 +2,14 @@ const { id } = require('../../services/provider')
 const base = require('../../base')
 const movies = require('../../models/movies.js')
 const store = require('../../services/cloudinary')
-module.exports.add = async (req, res) => {
-    // const {title, img, video, date, description, pg}
-}
-module.exports.uploadMovie = async (req, res) => {
+module.exports.uploadMovie = async (req) => {
   const { description, date, cast , title , pg, category, type} = req.body;
   const [img, video] = req.files;
-  if (!title || !cast || !img || !video || !date || !description  || !pg || !category || !type) throw new base.ResponseError(400, "You must provide Movie, Image, Title, Cast, Date and Description ");
+  if (!title || !cast || !img || !video || !date || !description  || !pg || !category || !type ) throw new base.ResponseError(400, "You must provide Movie, Image, Title, Cast, Date and Description ");
   if(!img.mimetype.startsWith('image')) throw new base.ResponseError(400, "Image must be of type Image")
   if(!video.mimetype.startsWith('video')) throw new base.ResponseError(400, "video must be of type Video")
-
   const videoId = id();
   const imgId = id();
-  const movie_data = video.buffer.toString("base64");
-  const img_data = img.buffer.toString("base64");
-
-
     const image_url = await store.upload(
       img,
       "movie",
@@ -31,7 +23,6 @@ module.exports.uploadMovie = async (req, res) => {
       "movie",
       videoId
     ).then((result) => result.secure_url).catch((error) => {
-      console.log(error)
       throw new base.ResponseError(400, error.message);
     });
     const movie = new movies({
@@ -51,6 +42,21 @@ module.exports.uploadMovie = async (req, res) => {
   })
   return new base.Response(201, {
     error: false,
-    message: "Document has been added to archive",
+    message: "Movie has been uploaded",
   });
 };
+
+module.exports.getAdminMovies = async () => {
+  let moviesCollection;
+  await movies.find({},(err, result) => {
+    if(err) throw new err
+    else {
+      moviesCollection = result
+    }
+  });
+  console.log(moviesCollection)
+  return new base.Response(201, {
+    error: false,
+    movies: moviesCollection,
+  });
+}
