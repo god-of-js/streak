@@ -1,7 +1,10 @@
 const { id } = require('../../services/provider')
 const base = require('../../base')
 const movies = require('../../models/movies.js')
+const {findFactory} = require('../../models/movies.js')
 const store = require('../../services/cloudinary')
+const c = require('../../data/collections')
+
 module.exports.uploadMovie = async (req) => {
   const { description, date, cast , title , pg, category, type} = req.body;
   const [img, video] = req.files;
@@ -45,18 +48,29 @@ module.exports.uploadMovie = async (req) => {
     message: "Movie has been uploaded",
   });
 };
-
 module.exports.getAdminMovies = async () => {
   let moviesCollection;
   await movies.find({},(err, result) => {
-    if(err) throw new err
+    if(err) throw new base.ResponseError(400, err.message)
     else {
       moviesCollection = result
     }
   });
-  console.log(moviesCollection)
   return new base.Response(201, {
     error: false,
     movies: moviesCollection,
   });
+}
+module.exports.getRecentlyAddedMovies = async () => {
+  let movieCollection;
+   await movies.find().sort({createdAt: -1}).limit(10).then(response => movieCollection = response)
+  return new base.Response(201, {
+    error: false,
+    movies: movieCollection,
+  });
+}
+module.exports.getSingleMovie = async (req, res) => {
+  const { q: searchQuery } = req.query;
+  const movie =  await movies.find({_id: searchQuery}).exec()
+  res.send({ ...movie })
 }

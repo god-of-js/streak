@@ -13,8 +13,10 @@ router.post('/video-upload',
 router.get('/get-admin-videos',
     make(movies.getAdminMovies)
     );
-
-
+router.get('/get-admin-recently-added-movies',
+        make(movies.getRecentlyAddedMovies)
+    );
+router.get('/get-single-movie',movies.getSingleMovie)
 
 
 
