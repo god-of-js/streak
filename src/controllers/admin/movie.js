@@ -1,7 +1,8 @@
 const { id } = require('../../services/provider')
 const base = require('../../base')
 const movies = require('../../models/movies.js')
-const {findFactory} = require('../../models/movies.js')
+const series = require('../../models/series.js')
+// const {findFactory} = require('../../models/movies.js')
 const store = require('../../services/cloudinary')
 const c = require('../../data/collections')
 
@@ -74,3 +75,51 @@ module.exports.getSingleMovie = async (req, res) => {
   const movie =  await movies.find({_id: searchQuery}).exec()
   res.send({ ...movie })
 }
+module.exports.uploadSeries = async (req) => {
+  const { description, date, cast , title , pg, category} = req.body;
+  const [img, video] = req.files;
+  if (!title || !cast || !img || !video || !description  || !pg || !category ) throw new base.ResponseError(400, "You must provide Movie, Image, Title, Cast, Date and Description ");
+  if(!img.mimetype.startsWith('image')) throw new base.ResponseError(400, "Image must be of type Image")
+  if(!video.mimetype.startsWith('video')) throw new base.ResponseError(400, "video must be of type Video")
+  const serie = await series.find({title: title}).exec()
+  if(serie.length !== 0)  throw new base.ResponseError(400, "This series already exists and can only be updated")
+  const videoId = id();
+  const imgId = id();
+    const image_url = await store.upload(
+      img,
+      "series",
+      imgId
+    ).then((result) => result.secure_url).catch((error) => {
+      console.log(error)
+      throw new base.ResponseError(400, error.message);
+    });
+  const video_url = await store.upload(
+      video,
+      "series",
+      videoId
+    ).then((result) => result.secure_url).catch((error) => {
+      throw new base.ResponseError(400, error.message);
+    });
+    let seasons = [1]
+    const movie = new series({
+        title,
+        description,
+        imgUrl: image_url,
+        videoUrl: video_url,
+        cast,
+        pg,
+        seasons,
+        category,
+        createdAt: Date.now()
+  })
+  const savedSeries = await movie.save().catch((e) => {
+    throw new base.ResponseError(400, e.message)
+  })
+
+  return new base.Response(201, {
+    error: false,
+    message: "Series has been created",
+    data: savedSeries
+
+  });
+};

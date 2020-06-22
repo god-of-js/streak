@@ -10,6 +10,12 @@ router.post('/video-upload',
     isAccountType('admin'),
     make(movies.uploadMovie)
     );
+router.post('/series-upload',
+    upload.array("media"),
+    isAuthenticated,
+    isAccountType('admin'),
+    make(movies.uploadSeries)
+    );
 router.get('/get-admin-videos',
     make(movies.getAdminMovies)
     );
