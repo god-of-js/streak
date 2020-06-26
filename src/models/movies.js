@@ -52,8 +52,6 @@ module.exports = mongoose.model("movies", schema);
 module.exports.findFactory = async (sort = null, limit = null) => {
     const db = schema;
     const result = await db.sort(sort).limit(limit);
-    console.log('entered')
-      console.log(result)
     const found = await result.toArray();
     return found.map(({ _id: id, ...data }) => ({
       id,

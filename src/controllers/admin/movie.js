@@ -47,40 +47,6 @@ module.exports.uploadMovie = async (req) => {
     message: "Movie has been uploaded",
   });
 };
-module.exports.getAdminMovies = async () => {
-  let moviesCollection;
-  await movies.find({},(err, result) => {
-    if(err) throw new base.ResponseError(400, err.message)
-    else {
-      moviesCollection = result
-    }
-  });
-  return new base.Response(201, {
-    error: false,
-    movies: moviesCollection,
-  });
-}
-module.exports.getRecentlyAddedMovies = async () => {
-  let movieCollection;
-   await movies.find().sort({createdAt: -1}).limit(10).then(response => movieCollection = response)
-  return new base.Response(201, {
-    error: false,
-    movies: movieCollection,
-  });
-}
-module.exports.getRecentlyAddedSeries = async () => {
-  let movieCollection;
-   await series.find().sort({createdAt: -1}).limit(10).then(response => movieCollection = response)
-  return new base.Response(201, {
-    error: false,
-    series: movieCollection,
-  });
-}
-module.exports.getSingleMovie = async (req, res) => {
-  const { q: searchQuery } = req.query;
-  const movie =  await movies.find({_id: searchQuery}).exec()
-  res.send({ ...movie })
-}
 module.exports.uploadSeries = async (req) => {
   const { description, date, cast , title , pg, category} = req.body;
   const [img, video] = req.files;
@@ -134,19 +100,6 @@ module.exports.uploadSeries = async (req) => {
 
   });
 };
-module.exports.getAdminSeries = async () => {
-  let moviesCollection;
-  await series.find({},(err, result) => {
-    if(err) throw new base.ResponseError(400, err.message)
-    else {
-      moviesCollection = result
-    }
-  });
-  return new base.Response(201, {
-    error: false,
-    series: moviesCollection,
-  });
-}
 module.exports.addSeason = async (req) => {
   const { cast , season, movieId} = req.body;
   const [img, video] = req.files;
@@ -160,6 +113,7 @@ module.exports.addSeason = async (req) => {
       "movie",
       imgId
     ).then((result) => result.secure_url).catch((error) => {
+      console.log(error, 'error')
       throw new base.ResponseError(400, error.message);
     });
   const video_url = await store.upload(
@@ -167,8 +121,10 @@ module.exports.addSeason = async (req) => {
       "movie",
       videoId
     ).then((result) => result.secure_url).catch((error) => {
+      console.log('from here')
       throw new base.ResponseError(400, error.message);
     });
+    console.log('no')
     const newSeason = {
       season,
       image_url,
