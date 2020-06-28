@@ -22,3 +22,8 @@ router.post('/season-add',
     isAccountType('admin'),
     make(admin.addSeason)
     );
+router.post('/add-episode',
+    upload.array("media"),
+    isAuthenticated,
+    isAccountType('admin'),
+    make(admin.addEpisode));

@@ -108,7 +108,7 @@ module.exports.addSeason = async (req) => {
   if(!video.mimetype.startsWith('video')) throw new base.ResponseError(400, "video must be of type Video")
   const videoId = id();
   const imgId = id();
-    const image_url = await store.upload(
+    const img_url = await store.upload(
       img,
       "movie",
       imgId
@@ -124,14 +124,14 @@ module.exports.addSeason = async (req) => {
       console.log('from here')
       throw new base.ResponseError(400, error.message);
     });
-    console.log('no')
     const newSeason = {
       season,
-      image_url,
+      img_url,
       video_url,
-      id: id(),
+      _id: id(),
       created: Date.now(),
-      movieId
+      movieId,
+      episodes: []
     }
     let seasonSearch = await series.findByIdAndUpdate({_id: movieId}, {$push:  {"seasons": newSeason}}).exec().catch(() => {
       throw new base.ResponseError(400, "Image must be of type Image")
@@ -143,5 +143,50 @@ module.exports.addSeason = async (req) => {
     });
 };
 module.exports.addEpisode = async (req) => {
-  const {episode, image, shortClip} = req.body
+  const {seriesId, seasonId, episodeNumber} = req.body;
+  const [img, video] = req.files;
+  if(!video || !img ) throw new base.ResponseError(400, 'You must provide episode, image');
+  if(!img.mimetype.startsWith('image')) throw new base.ResponseError(400, "Image must be of type Image")
+  if(!video.mimetype.startsWith('video')) throw new base.ResponseError(400, "episode must be of type Video")
+    const imgId = id();
+    const videoId = id();
+    const img_url = await store.upload(
+      img,
+      "movie",
+      imgId
+    ).then((result) => result.secure_url).catch((error) => {
+      console.log(error, 'error')
+      throw new base.ResponseError(400, error.message);
+    });
+    const video_url = await store.upload(
+      video,
+      "movie",
+      videoId
+    ).then((result) => result.secure_url).catch((error) => {
+      console.log(error, 'error')
+      throw new base.ResponseError(400, error.message);
+    });
+    const newEpisode = {
+      img_url,
+      video_url,
+      seriesId,
+      seasonId,
+      episodeNumber,
+      createdAt: Date.now(),
+      _id: id()
+    }
+    let seasonSearch = await series.findOne({_id: seriesId}).exec().catch(() => {
+      throw new base.ResponseError(400, "Image must be of type Image")
+    })
+    console.log(seasonSearch)
+   let arr = seasonSearch.seasons.find(x => x._id === seasonId)
+    arr.episodes.push(newEpisode)
+   await seasonSearch.save().catch((e) => {
+    throw new base.ResponseError(400, e.message)
+})
+  return new base.Response(200, {
+    message: 'Episode added successfully',
+    data: seasonSearch,
+    error: false,
+})
 }
