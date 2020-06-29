@@ -26,10 +26,6 @@ const schema = new mongoose.Schema({
     createdAt: {
         type: Date,
     },
-    seasons: {
-        type: Array,
-        required: "You must provide season"
-    },
     pg: {
         type: Number,
         required: "you must provide Parental Guidiance"

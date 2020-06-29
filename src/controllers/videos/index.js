@@ -1,6 +1,7 @@
 const base = require('../../base')
 const movies = require('../../models/movies.js')
 const series = require('../../models/series.js')
+const seasons = require('../../models/seasons.js')
 module.exports.getSeries = async () => {
     let moviesCollection;
     await series.find({},(err, result) => {
@@ -19,9 +20,12 @@ module.exports.getSingleSerie = async (req) => {
     const serie =  await series.find({_id: searchQuery}).exec().catch(e => {
       throw new base.ResponseError(400, e.message)
     })
+    console.log(serie)
+    const seasonCollection = await seasons.find({seriesId: searchQuery}).exec()
     return new base.Response(201, {
       error: false,
-       ...serie
+       ...serie,
+       seasons: seasonCollection
     });
 }
 module.exports.getMovies = async () => {
