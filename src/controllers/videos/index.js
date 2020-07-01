@@ -64,7 +64,6 @@ module.exports.getSingleMovie = async (req) => {
     })
     return new base.Response(201, {
       error: false,
-      message: `Season ${newSeason.season} has been added to the series ${seasonSearch.title}`,
        ...movie
     });
 }
