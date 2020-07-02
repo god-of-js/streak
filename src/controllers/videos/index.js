@@ -20,7 +20,6 @@ module.exports.getSingleSerie = async (req) => {
     const serie =  await series.find({_id: searchQuery}).exec().catch(e => {
       throw new base.ResponseError(400, e.message)
     })
-    console.log(serie)
     const seasonCollection = await seasons.find({seriesId: searchQuery}).exec()
     return new base.Response(201, {
       error: false,

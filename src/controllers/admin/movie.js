@@ -18,7 +18,6 @@ module.exports.uploadMovie = async (req) => {
       "movie",
       imgId
     ).then((result) => result.secure_url).catch((error) => {
-      console.log(error)
       throw new base.ResponseError(400, error.message);
     });
   const video_url = await store.upload(
@@ -61,7 +60,6 @@ module.exports.uploadAnime = async (req) => {
       "movie",
       imgId
     ).then((result) => result.secure_url).catch((error) => {
-      console.log(error)
       throw new base.ResponseError(400, error.message);
     });
   const video_url = await store.upload(
@@ -106,7 +104,6 @@ module.exports.uploadSeries = async (req) => {
       "series",
       imgId
     ).then((result) => result.secure_url).catch((error) => {
-      console.log(error)
       throw new base.ResponseError(400, error.message);
     });
   const video_url = await store.upload(
@@ -209,7 +206,6 @@ module.exports.addEpisode = async (req) => {
       "movie",
       imgId
     ).then((result) => result.secure_url).catch((error) => {
-      console.log(error, 'error')
       throw new base.ResponseError(400, error.message);
     });
     const video_url = await store.upload(
@@ -217,7 +213,6 @@ module.exports.addEpisode = async (req) => {
       "movie",
       videoId
     ).then((result) => result.secure_url).catch((error) => {
-      console.log(error, 'error')
       throw new base.ResponseError(400, error.message);
     });
     const newEpisode = {
