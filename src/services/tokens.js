@@ -7,8 +7,8 @@ module.exports = {
      decode: (token) => {
         try {
             return jwt.verify(token, JWT_SECRET_KEY)
-        } catch {
-            return null
+        } catch (err){
+            return err
         }
     }
 
